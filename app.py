@@ -4,6 +4,7 @@ import io
 import qrcode
 import datetime # Added for timestamp
 from sheets_utils import append_to_sheet # Added for Google Sheets integration
+from rsvp_flow.routes import rsvp_bp # Import the new blueprint
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_very_secret_key_here'  # Replace with a real secret key
@@ -11,9 +12,13 @@ app.config['PIX_KEY'] = 'YOUR_ACTUAL_PIX_KEY_HERE' # IMPORTANT: Replace with you
 app.config['GOOGLE_SHEET_ID'] = 'YOUR_GOOGLE_SHEET_ID_FROM_CONFIG_OR_ENV' # Placeholder
 # For a real application, load PIX_KEY from environment variables or a secure config file.
 
+app.register_blueprint(rsvp_bp) # Register the blueprint
+
 # Dummy routes for previous and next steps for now
 @app.route('/')
 def index():
+    # Redirect to the first step of the RSVP flow
+    return redirect(url_for('rsvp.select_city'))
 
 @app.route('/names-vegetarian')
 def names_vegetarian():
@@ -22,7 +27,9 @@ def names_vegetarian():
 @app.route('/names', methods=['GET', 'POST'])
 def names_form():
     if 'number_of_people' not in session:
-        return redirect(url_for('index')) # Or perhaps number_of_people
+        return redirect(url_for('number_of_people')) # Or perhaps number_of_people
+    if 'city' not in session or 'group' not in session: # Check for city and group
+        return redirect(url_for('rsvp.select_city'))
 
     num_people = session['number_of_people']
 
@@ -49,6 +56,13 @@ def names_form():
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact_form():
+    if 'names' not in session or 'vegetarian_options' not in session: # Check for names and vegetarian options
+        return redirect(url_for('names_form'))
+    if 'city' not in session or 'group' not in session: # Check for city and group
+        return redirect(url_for('rsvp.select_city'))
+    if 'number_of_people' not in session:
+        return redirect(url_for('number_of_people'))
+
     if request.method == 'POST':
         phone_number = request.form.get('phone_number')
         if not phone_number:
@@ -163,9 +177,19 @@ def generate_qr_code_base64(payload):
 
 @app.route('/pix-payment', methods=['GET'])
 def pix_payment_form():
-    if 'number_of_people' not in session or 'names' not in session:
+    if 'number_of_people' not in session or 'names' not in session or 'phone_number' not in session:
         # Not enough data to proceed, redirect to an earlier step
-        return redirect(url_for('index')) # Or 'number_of_people'
+        # Check for all necessary session variables from previous steps
+        if 'city' not in session or 'group' not in session:
+            return redirect(url_for('rsvp.select_city'))
+        if 'number_of_people' not in session:
+            return redirect(url_for('number_of_people'))
+        if 'names' not in session:
+            return redirect(url_for('names_form'))
+        if 'phone_number' not in session:
+            return redirect(url_for('contact_form'))
+        # Fallback if a specific check is missed, though the above should cover it
+        return redirect(url_for('rsvp.select_city')) 
 
     num_people = session['number_of_people']
     names = session['names']
@@ -307,6 +331,9 @@ def confirmation():
 
 @app.route('/number-of-people', methods=['GET', 'POST'])
 def number_of_people():
+    if 'city' not in session or 'group' not in session: # Check for city and group
+        return redirect(url_for('rsvp.select_city'))
+
     if request.method == 'POST':
         num_people_str = request.form.get('num_people')
         error = None
