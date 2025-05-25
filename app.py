@@ -14,10 +14,6 @@ app.config['GOOGLE_SHEET_ID'] = 'YOUR_GOOGLE_SHEET_ID_FROM_CONFIG_OR_ENV' # Plac
 # Dummy routes for previous and next steps for now
 @app.route('/')
 def index():
-    # Simulate that city and group have been selected and stored in session
-    session['city'] = 'São José dos Campos'
-    session['group'] = 'Amigos do Noivo'
-    return "Welcome! City and Group selected. <a href='/number-of-people'>Select number of people</a>"
 
 @app.route('/names-vegetarian')
 def names_vegetarian():
