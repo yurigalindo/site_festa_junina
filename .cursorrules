@@ -1,0 +1,25 @@
+Technologies:
+- Python 3.x
+- Flask web framework (for backend and routing)
+- HTML (Jinja2 templates) and minimal CSS for frontend (visuals are placeholders)
+- Google Sheets API for data storage
+- qrcode and pillow Python libraries for QR code generation
+
+Best Practices:
+- Organize code by feature: keep routes, forms, and templates modular and clear
+- Use Flask’s session to store user progress through the RSVP steps
+- Use clear, descriptive variable and function names (in English)
+- All user-facing text must be in Brazilian Portuguese
+- Validate all user inputs on both client and server sides
+- Handle errors gracefully and show user-friendly error messages
+- Keep secrets (e.g., Google API credentials, Pix key) out of source code and load from environment variables/config files
+- Comment code where logic may be unclear
+- Structure templates for easy future upgrade to custom visuals/animations
+
+Implementation Philosophy:
+- Prioritize simple, linear user flow with “back” navigation enabled until payment step
+- Use placeholder visuals and focus on correctness of functionality
+- Make it easy to extend the project with new features or visuals in the future
+- Use hardcoded city and group lists for now
+- Store RSVP data in Google Sheets as soon as payment is confirmed
+- QR code generation must include Pix key, value (15 * number of people), and description (names of confirmed people)

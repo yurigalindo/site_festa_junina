@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pagamento Pix</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); max-width: 600px; margin: 20px auto; text-align: center; }
+        h1 { color: #5cb85c; }
+        .instructions { margin-bottom: 20px; line-height: 1.6; }
+        .qr-code-container { margin-bottom: 20px; }
+        .qr-code-container img { max-width: 250px; height: auto; border: 1px solid #ddd; padding: 5px; }
+        .pix-payload { 
+            word-wrap: break-word; 
+            background-color: #f0f0f0; 
+            padding: 10px; 
+            border-radius: 4px; 
+            font-family: monospace; 
+            margin-bottom: 20px; 
+            border: 1px solid #ccc;
+            max-height: 100px; /* Limit height */
+            overflow-y: auto; /* Add scroll for overflow */
+            text-align: left;
+        }
+        .button-container { margin-top: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .button-link, button {
+            background-color: #5cb85c; color: white; padding: 12px 20px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; font-size: 16px;
+        }
+        .button-link:hover, button:hover { background-color: #4cae4c; }
+        .amount { font-size: 1.2em; font-weight: bold; margin-bottom: 15px; }
+        .copy-button {
+            background-color: #007bff; /* A different color for copy button */
+            margin-left: 10px;
+            padding: 8px 12px;
+            font-size: 0.9em;
+        }
+        .copy-button:hover { background-color: #0056b3; }
+        .payload-header { text-align: left; font-weight: bold; margin-bottom: 5px;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Pagamento via Pix</h1>
+        <p class="instructions">{{ instructions|safe }}</p>
+        <p class="amount">Valor a pagar: R$ {{ amount_str }}</p>
+
+        <div class="qr-code-container">
+            <img src="data:image/png;base64,{{ qr_image }}" alt="Pix QR Code">
+        </div>
+
+        <div class="payload-header">Pix Copia e Cola:</div>
+        <div class="pix-payload" id="pixPayloadText">
+            {{ pix_payload }}
+        </div>
+        <button onclick="copyPixPayload()" class="copy-button">Copiar Código</button>
+        
+        <form action="{{ url_for('confirmation') }}" method="GET" style="margin-top: 20px;">
+            <div class="button-container">
+                <a href="{{ url_for('contact_form') }}" class="button-link">Voltar</a>
+                <button type="submit">Fiz o Pix!</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function copyPixPayload() {
+            const payloadText = document.getElementById('pixPayloadText').innerText;
+            navigator.clipboard.writeText(payloadText).then(() => {
+                alert('Código Pix copiado para a área de transferência!');
+            }).catch(err => {
+                alert('Erro ao copiar o código Pix. Tente manualmente.');
+                console.error('Erro ao copiar: ', err);
+            });
+        }
+    </script>
+</body>
+</html> 

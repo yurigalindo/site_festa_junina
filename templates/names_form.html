@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nomes dos Participantes</title>
+    <style>
+        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; }
+        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        h1 { color: #5cb85c; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input[type="text"], input[type="number"] { width: calc(100% - 22px); padding: 10px; border: 1px solid #ddd; border-radius: 4px; }
+        input[type="checkbox"] { margin-right: 5px; }
+        .button-container { margin-top: 20px; }
+        button, .button-link {
+            background-color: #5cb85c; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer; text-decoration: none; display: inline-block;
+        }
+        button:hover, .button-link:hover { background-color: #4cae4c; }
+        .error { color: red; margin-bottom: 15px; }
+        .person-section { border: 1px solid #eee; padding: 15px; margin-bottom: 15px; border-radius: 4px; background-color: #fafafa; }
+        h2 { font-size: 1.2em; color: #333; margin-top: 0;}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Informações dos Participantes</h1>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <form method="POST">
+            {% for i in range(1, num_people + 1) %}
+            <div class="person-section">
+                <h2>Pessoa {{ i }}</h2>
+                <div class="form-group">
+                    <label for="name_{{ i }}">Nome da pessoa:</label>
+                    <input type="text" id="name_{{ i }}" name="name_{{ i }}" value="{{ request.form.get('name_' + i|string, '') }}" required>
+                </div>
+                <div class="form-group">
+                    <input type="checkbox" id="vegetarian_{{ i }}" name="vegetarian_{{ i }}" {% if request.form.get('vegetarian_' + i|string) == 'on' %}checked{% endif %}>
+                    <label for="vegetarian_{{ i }}">Vegetariano?</label>
+                </div>
+            </div>
+            {% endfor %}
+            <div class="button-container">
+                <a href="{{ url_for('number_of_people') }}" class="button-link">Voltar</a>
+                <button type="submit">Próximo</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html> 
