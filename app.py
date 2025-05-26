@@ -25,9 +25,6 @@ class RSVP(db.Model):
     names_str = db.Column(db.String(500), nullable=False) # Storing names as a comma-separated string
     veg_options_str = db.Column(db.String(100), nullable=False) # Storing veg options as comma-separated string of "True"/"False"
     phone = db.Column(db.String(20), nullable=False)
-    amount = db.Column(db.Float, nullable=False)
-    pix_desc = db.Column(db.String(200), nullable=False)
-    payment_confirmed = db.Column(db.Boolean, default=False) # New field to track payment status
 
     def __repr__(self):
         return f'<RSVP {self.id}>'
@@ -320,8 +317,6 @@ def confirmation():
     names = session.get('names')
     vegetarian_options = session.get('vegetarian_options') # This is a list of booleans
     phone_number = session.get('phone_number')
-    pix_description = session.get('pix_description') # Generated in pix_payment_form
-    amount = session.get('amount') # Calculated in pix_payment_form
 
     # Convert lists to strings for storage
     names_str = ", ".join(names)
@@ -336,13 +331,10 @@ def confirmation():
             names_str=names_str,
             veg_options_str=veg_options_str,
             phone=phone_number,
-            amount=float(amount), # Ensure amount is float
-            pix_desc=pix_description,
-            payment_confirmed=True # Assuming payment is confirmed when this page is reached
         )
         db.session.add(new_rsvp)
         db.session.commit()
-        print("RSVP data saved to database.")
+        print(f"RSVP data saved to database: {names_str}")
     except Exception as e:
         db.session.rollback()
         print(f"Error saving RSVP to database: {e}")
