@@ -1,11 +1,10 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
-# Import db and RSVP from models.py
-from models import db, RSVP
-# Import Pix utilities from utils.py
-from utils import generate_pix_payload, calculate_crc16, generate_qr_code_base64
+
+from .models import db, RSVP
+from .utils import generate_pix_payload, calculate_crc16, generate_qr_code_base64
 
 
-rsvp_bp = Blueprint('rsvp', __name__, url_prefix='/rsvp', template_folder='../templates')
+rsvp_bp = Blueprint('rsvp', __name__, template_folder='../templates')
 
 # Hardcoded city and group data
 CITY_GROUP_OPTIONS = {
@@ -13,7 +12,7 @@ CITY_GROUP_OPTIONS = {
     "Taubaté": ["Amigos de Taubaté", "Família de Taubaté", "Trabalho"]
 }
 
-@rsvp_bp.route('/', methods=['GET', 'POST']) # Changed from /city to / to make it the default for the blueprint
+@rsvp_bp.route('/', methods=['GET', 'POST'])
 @rsvp_bp.route('/city', methods=['GET', 'POST'])
 def select_city():
     if request.method == 'POST':
@@ -46,7 +45,7 @@ def select_group():
         group = request.form.get('group')
         if group and group in groups:
             session['group'] = group
-            return redirect(url_for('rsvp.number_of_people')) # Updated to rsvp.number_of_people
+            return redirect(url_for('rsvp.number_of_people'))
         else:
             error = "Por favor, selecione um grupo válido."
             return render_template('group_selection.html', city=city, groups=groups, error=error)
@@ -58,12 +57,11 @@ def select_group():
     session.pop('phone_number', None)
     return render_template('group_selection.html', city=city, groups=groups)
 
-# Routes moved from app.py
-@rsvp_bp.route('/names-vegetarian') # Added to blueprint
+@rsvp_bp.route('/names-vegetarian')
 def names_vegetarian():
-    return "Next step: Enter names and vegetarian status." # This seems like a placeholder
+    return "Next step: Enter names and vegetarian status."
 
-@rsvp_bp.route('/names', methods=['GET', 'POST']) # Added to blueprint
+@rsvp_bp.route('/names', methods=['GET', 'POST'])
 def names_form():
     if 'number_of_people' not in session:
         return redirect(url_for('rsvp.number_of_people')) 
@@ -96,7 +94,7 @@ def names_form():
         
         session['names'] = names
         session['vegetarian_options'] = vegetarian_options
-        return redirect(url_for('rsvp.contact_form')) # Updated to rsvp.contact_form
+        return redirect(url_for('rsvp.contact_form'))
 
     retrieved_names = session.get('names', [])
     retrieved_vegetarian_options = session.get('vegetarian_options', [])
@@ -117,7 +115,7 @@ def names_form():
         vegetarian_options=expected_veg_options
     )
 
-@rsvp_bp.route('/contact', methods=['GET', 'POST']) # Added to blueprint
+@rsvp_bp.route('/contact', methods=['GET', 'POST'])
 def contact_form():
     if 'names' not in session or 'vegetarian_options' not in session:
         return redirect(url_for('rsvp.names_form'))
@@ -133,17 +131,17 @@ def contact_form():
             return render_template('contact_phone_form.html', error=error, phone_number=phone_number)
         
         session['phone_number'] = phone_number
-        return redirect(url_for('rsvp.pix_payment_form')) # Updated to rsvp.pix_payment_form
+        return redirect(url_for('rsvp.pix_payment_form'))
 
     phone_number = session.get('phone_number', '')
     return render_template('contact_phone_form.html', phone_number=phone_number)
 
-@rsvp_bp.route('/pix-payment', methods=['GET']) # Added to blueprint
+@rsvp_bp.route('/pix-payment', methods=['GET'])
 def pix_payment_form():
     if 'number_of_people' not in session or 'names' not in session or 'phone_number' not in session:
         if 'city' not in session or 'group' not in session:
             return redirect(url_for('rsvp.select_city'))
-        if 'number_of_people' not in session: # This check is somewhat redundant given the outer if, but kept for safety
+        if 'number_of_people' not in session: 
             return redirect(url_for('rsvp.number_of_people'))
         if 'names' not in session:
             return redirect(url_for('rsvp.names_form'))
@@ -164,7 +162,7 @@ def pix_payment_form():
     txid = "***"
 
     pix_payload = generate_pix_payload(
-        pix_key=current_app.config['PIX_KEY'], # Changed from app.config to current_app.config
+        pix_key=current_app.config['PIX_KEY'], 
         merchant_name="Arraia da Laura",
         merchant_city="SJC",
         amount_str=amount_str,
@@ -172,7 +170,7 @@ def pix_payment_form():
         txid=txid
     )
     
-    qr_image_base64 = generate_qr_code_base64(pix_payload) # Uses utility function
+    qr_image_base64 = generate_qr_code_base64(pix_payload)
     
     session['amount'] = amount
     session['pix_payload'] = pix_payload
@@ -192,7 +190,7 @@ def pix_payment_form():
         instructions=payment_instructions
     )
 
-@rsvp_bp.route('/confirmation') # Added to blueprint
+@rsvp_bp.route('/confirmation')
 def confirmation():
     required_session_keys = ['city', 'group', 'number_of_people', 'names', 'vegetarian_options', 'phone_number', 'pix_description', 'amount']
     for key in required_session_keys:
@@ -211,7 +209,7 @@ def confirmation():
     veg_options_str = ", ".join(map(str, vegetarian_options))
 
     try:
-        new_rsvp = RSVP( # Uses RSVP model
+        new_rsvp = RSVP(
             city=city,
             group=group,
             num_people=num_people,
@@ -219,7 +217,7 @@ def confirmation():
             veg_options_str=veg_options_str,
             phone=phone_number,
         )
-        db.session.add(new_rsvp) # Uses db.session
+        db.session.add(new_rsvp)
         db.session.commit()
         print(f"RSVP data saved to database: {names_str}")
     except Exception as e:
@@ -239,7 +237,7 @@ def confirmation():
 
     return render_template('confirmation.html', names=names_str, num_people=num_people)
 
-@rsvp_bp.route('/number-of-people', methods=['GET', 'POST']) # Added to blueprint
+@rsvp_bp.route('/number-of-people', methods=['GET', 'POST'])
 def number_of_people():
     if 'city' not in session or 'group' not in session:
         return redirect(url_for('rsvp.select_city'))
@@ -259,7 +257,7 @@ def number_of_people():
                         session.pop('names', None)
                         session.pop('vegetarian_options', None)
                     session['number_of_people'] = num_people
-                    return redirect(url_for('rsvp.names_form')) # Updated to rsvp.names_form
+                    return redirect(url_for('rsvp.names_form'))
             except ValueError:
                 error = "Por favor, insira um número válido."
 
