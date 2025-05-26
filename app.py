@@ -36,14 +36,22 @@ def names_form():
     if request.method == 'POST':
         names = []
         vegetarian_options = []
+        error_message = None # Initialize error message
+
         for i in range(1, num_people + 1):
             name = request.form.get(f'name_{i}')
             vegetarian = request.form.get(f'vegetarian_{i}') == 'on' # Checkbox value is 'on' if checked
             
             if not name:
-                # Basic validation: ensure all names are provided
-                error = f"Por favor, informe o nome da pessoa {i}."
-                return render_template('names_form.html', num_people=num_people, error=error)
+                error_message = f"Por favor, informe o nome da pessoa {i}."
+                # If there's an error, collect all submitted data to re-populate the form
+                submitted_names = [request.form.get(f'name_{k}') for k in range(1, num_people + 1)]
+                submitted_veg_options = [request.form.get(f'vegetarian_{k}') == 'on' for k in range(1, num_people + 1)]
+                return render_template('names_form.html',
+                                       num_people=num_people,
+                                       error=error_message,
+                                       names=submitted_names,
+                                       vegetarian_options=submitted_veg_options)
 
             names.append(name)
             vegetarian_options.append(vegetarian)
@@ -52,7 +60,26 @@ def names_form():
         session['vegetarian_options'] = vegetarian_options
         return redirect(url_for('contact_form'))
 
-    return render_template('names_form.html', num_people=num_people)
+    # GET request:
+    retrieved_names = session.get('names', [])
+    retrieved_vegetarian_options = session.get('vegetarian_options', [])
+
+    # Ensure lists are correctly sized for the template, padded with defaults
+    expected_names = [None] * num_people
+    expected_veg_options = [False] * num_people
+
+    for i in range(min(len(retrieved_names), num_people)):
+        expected_names[i] = retrieved_names[i]
+    
+    for i in range(min(len(retrieved_vegetarian_options), num_people)):
+        expected_veg_options[i] = retrieved_vegetarian_options[i]
+
+    return render_template(
+        'names_form.html',
+        num_people=num_people,
+        names=expected_names,
+        vegetarian_options=expected_veg_options
+    )
 
 @app.route('/contact', methods=['GET', 'POST'])
 def contact_form():
@@ -67,6 +94,7 @@ def contact_form():
         phone_number = request.form.get('phone_number')
         if not phone_number:
             error = "Por favor, informe seu telefone para contato."
+            # Pass back the attempted phone_number on error
             return render_template('contact_phone_form.html', error=error, phone_number=phone_number)
         
         # Basic validation could be expanded here (e.g., regex for phone format)
@@ -345,15 +373,22 @@ def number_of_people():
                 if not 1 <= num_people <= 10:
                     error = "O número de pessoas deve ser entre 1 e 10."
                 else:
+                    # If number_of_people changes, clear associated session data
+                    if session.get('number_of_people') != num_people:
+                        session.pop('names', None)
+                        session.pop('vegetarian_options', None)
                     session['number_of_people'] = num_people
                     return redirect(url_for('names_form')) # Corrected redirect
             except ValueError:
                 error = "Por favor, insira um número válido."
 
         if error:
+            # Pass back the attempted value on error
             return render_template('number_of_people.html', error=error, num_people=num_people_str)
 
-    return render_template('number_of_people.html')
+    # GET request: Retrieve from session and pass to template
+    num_people_value = session.get('number_of_people', '') 
+    return render_template('number_of_people.html', num_people=num_people_value)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5001)
