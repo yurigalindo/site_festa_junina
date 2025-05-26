@@ -57,10 +57,6 @@ def select_group():
     session.pop('phone_number', None)
     return render_template('group_selection.html', city=city, groups=groups)
 
-@rsvp_bp.route('/names-vegetarian')
-def names_vegetarian():
-    return "Next step: Enter names and vegetarian status."
-
 @rsvp_bp.route('/names', methods=['GET', 'POST'])
 def names_form():
     if 'number_of_people' not in session:
