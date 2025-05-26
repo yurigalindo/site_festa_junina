@@ -36,11 +36,6 @@ body {
     margin-bottom: 1.5rem;
 }
 
-.text-success {
-    /* This class is used from Bootstrap, ensure it meets desired color if not using Bootstrap CSS, or if overriding */
-    /* color: #198754; /* Default Bootstrap success color */
-}
-
 /* Styles moved from names_form.html */
 h1 {
     color: #333; /* Was in names_form.html, good global default if not using Bootstrap h1 styles */
