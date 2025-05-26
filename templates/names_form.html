@@ -17,9 +17,6 @@
         .error { color: red; margin-bottom: 10px; }
         .person-entry { margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #eee; }
         .person-entry:last-child { border-bottom: none; }
-        .navigation-buttons { margin-top: 20px; }
-        .navigation-buttons button { background-color: #007bff; margin-right: 10px; }
-        .navigation-buttons button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
@@ -43,8 +40,8 @@
                 <label for="vegetarian_{{ i }}" style="display: inline;">Vegetariano?</label>
             </div>
             {% endfor %}
-            <div class="navigation-buttons">
-                <button type="button" onclick="window.location.href='{{ url_for('number_of_people') }}'" class="btn btn-secondary btn-lg">Voltar</button>
+            <div class="d-flex justify-content-between align-items-center mt-4">
+                <a href="{{ url_for('number_of_people') }}" class="btn btn-secondary btn-lg">Voltar</a>
                 <button type="submit" class="btn btn-primary btn-lg w-100 ms-3">Próximo</button>
             </div>
         </form>
