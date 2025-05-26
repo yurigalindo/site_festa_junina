@@ -1,8 +1,11 @@
 Flask>=2.0
+Flask-WTF
+python-dotenv>=1.0
 qrcode[pil]>=7.0
 Pillow>=9.0
-python-dotenv>=1.0
-google-api-python-client
-google-auth
-google-auth-oauthlib
-google-auth-httplib2
+Flask-SQLAlchemy
+SQLAlchemy
+# google-api-python-client
+# google-auth
+# google-auth-httplib2
+# google-auth-oauthlib

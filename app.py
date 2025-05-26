@@ -3,14 +3,38 @@ import base64
 import io
 import qrcode
 import datetime # Added for timestamp
-from sheets_utils import append_to_sheet # Added for Google Sheets integration
+from flask_sqlalchemy import SQLAlchemy # Added for SQLAlchemy
+# from sheets_utils import append_to_sheet # Removed Google Sheets integration
 from rsvp_flow.routes import rsvp_bp # Import the new blueprint
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'your_very_secret_key_here'  # Replace with a real secret key
 app.config['PIX_KEY'] = 'YOUR_ACTUAL_PIX_KEY_HERE' # IMPORTANT: Replace with your real Pix key
-app.config['GOOGLE_SHEET_ID'] = 'YOUR_GOOGLE_SHEET_ID_FROM_CONFIG_OR_ENV' # Placeholder
-# For a real application, load PIX_KEY from environment variables or a secure config file.
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rsvp.db' # Added SQLite URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # Optional: disable modification tracking
+
+db = SQLAlchemy(app) # Initialize SQLAlchemy
+
+# Define the RSVP model
+class RSVP(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    timestamp = db.Column(db.DateTime, default=datetime.datetime.utcnow)
+    city = db.Column(db.String(100), nullable=False)
+    group = db.Column(db.String(100), nullable=False)
+    num_people = db.Column(db.Integer, nullable=False)
+    names_str = db.Column(db.String(500), nullable=False) # Storing names as a comma-separated string
+    veg_options_str = db.Column(db.String(100), nullable=False) # Storing veg options as comma-separated string of "True"/"False"
+    phone = db.Column(db.String(20), nullable=False)
+    amount = db.Column(db.Float, nullable=False)
+    pix_desc = db.Column(db.String(200), nullable=False)
+    payment_confirmed = db.Column(db.Boolean, default=False) # New field to track payment status
+
+    def __repr__(self):
+        return f'<RSVP {self.id}>'
+
+# Create database tables if they don't exist
+with app.app_context():
+    db.create_all()
 
 app.register_blueprint(rsvp_bp) # Register the blueprint
 
@@ -256,9 +280,9 @@ def pix_payment_form():
     
     qr_image_base64 = generate_qr_code_base64(pix_payload)
     
-    session['pix_amount'] = amount
+    session['amount'] = amount
     session['pix_payload'] = pix_payload # This is the "copia e cola"
-    session['pix_description_for_sheets'] = pix_description # For Google Sheets
+    session['pix_description'] = pix_description # For Google Sheets
 
     payment_instructions = (
         f"O valor total da sua contribuição é de R$ {amount_str}.<br>"
@@ -279,83 +303,68 @@ def confirmation():
     # This is where you would typically save to Google Sheets.
     # For now, just show a thank you message.
     # Retrieve data from session to display or save
-    city = session.get('city', 'N/A')
-    group = session.get('group', 'N/A')
-    num_people = session.get('number_of_people', 0)
-    names = session.get('names', [])
-    vegetarian_options = session.get('vegetarian_options', [])
-    phone_number = session.get('phone_number', 'N/A')
-    pix_amount = session.get('pix_amount', 0.0)
-    pix_description_gs = session.get('pix_description_for_sheets', 'N/A')
 
-    # Prepare data for Google Sheets
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    # Ensure all required data is in session before proceeding
+    required_session_keys = ['city', 'group', 'number_of_people', 'names', 'vegetarian_options', 'phone_number', 'pix_description', 'amount']
+    for key in required_session_keys:
+        if key not in session:
+            # If any key is missing, redirect to an earlier appropriate step or an error page.
+            # This is a simplified redirect; a real app might have a more specific error page
+            # or redirect to the last valid step.
+            print(f"Missing session key: {key} during confirmation step.")
+            return redirect(url_for('rsvp.select_city')) 
+
+    city = session.get('city')
+    group = session.get('group')
+    num_people = session.get('number_of_people')
+    names = session.get('names')
+    vegetarian_options = session.get('vegetarian_options') # This is a list of booleans
+    phone_number = session.get('phone_number')
+    pix_description = session.get('pix_description') # Generated in pix_payment_form
+    amount = session.get('amount') # Calculated in pix_payment_form
+
+    # Convert lists to strings for storage
     names_str = ", ".join(names)
-    veg_options_str = ", ".join(["Sim" if veg else "Não" for veg in vegetarian_options])
+    veg_options_str = ", ".join(map(str, vegetarian_options)) # Converts [True, False] to "True, False"
 
-    sheet_data = [
-        timestamp, city, group, num_people, names_str, 
-        veg_options_str, phone_number, pix_amount, pix_description_gs
-    ]
+    # Store data in SQLite database
+    try:
+        new_rsvp = RSVP(
+            city=city,
+            group=group,
+            num_people=num_people,
+            names_str=names_str,
+            veg_options_str=veg_options_str,
+            phone=phone_number,
+            amount=float(amount), # Ensure amount is float
+            pix_desc=pix_description,
+            payment_confirmed=True # Assuming payment is confirmed when this page is reached
+        )
+        db.session.add(new_rsvp)
+        db.session.commit()
+        print("RSVP data saved to database.")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving RSVP to database: {e}")
+        # Optionally, render an error page or flash a message to the user
+        # For now, we'll just print the error and proceed to the confirmation page
+        # but ideally, you'd handle this more gracefully.
+        return render_template('error.html', error_message="Ocorreu um erro ao salvar sua confirmação. Tente novamente.")
 
-    sheet_save_error = None
-    if not append_to_sheet(sheet_data):
-        sheet_save_error = "Houve um problema ao salvar sua confirmação na planilha. Não se preocupe, seus dados de sessão estão seguros. Por favor, entre em contato com o organizador."
-        # In a real app, you might want to log this error more robustly
-        # or offer the user a way to retry or send the data manually.
+    # Clear the session after successful RSVP or if there was an attempt to save
+    # You might want to clear session selectively or based on success
+    session.pop('city', None)
+    session.pop('group', None)
+    session.pop('number_of_people', None)
+    session.pop('names', None)
+    session.pop('vegetarian_options', None)
+    session.pop('phone_number', None)
+    session.pop('pix_qr_code', None) # Also clear QR code if stored
+    session.pop('amount', None)
+    session.pop('pix_description', None)
+    # Do not clear 'confirmed_details' if you want to display it on the thank you page
 
-    # Clear session after processing if desired, or keep for "back" navigation review
-    # For this flow, we'll assume we can clear parts or all of it after confirmation.
-    # For simplicity, we won't clear it yet.
-
-    confirmation_html_parts = [
-        "<!DOCTYPE html>",
-        "<html lang=\"pt-BR\">",
-        "<head>",
-        "    <meta charset=\"UTF-8\">",
-        "    <title>Confirmação</title>",
-        "    <style>",
-        "        body { font-family: sans-serif; margin: 20px; background-color: #f4f4f4; color: #333; text-align: center; }",
-        "        .container { background-color: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); display: inline-block; text-align: left; max-width: 600px; margin-top: 20px; }",
-        "        h1 { color: #5cb85c; }",
-        "        h3, h4 { color: #333; margin-top: 1.5em; }",
-        "        ul { list-style-type: none; padding-left: 0; }",
-        "        li { background-color: #eee; margin-bottom: 5px; padding: 8px; border-radius: 3px; }",
-        "        p { margin: 0.5em 0; }",
-        "        .error-message { color: red; font-weight: bold; margin-top: 1em; padding: 10px; border: 1px solid red; background-color: #ffebeb; border-radius: 4px; }", # Added error style
-        "    </style>",
-        "</head>",
-        "<body>",
-        "    <div class=\"container\">"
-    ]
-
-    if sheet_save_error:
-        confirmation_html_parts.append(f"        <div class=\"error-message\">{sheet_save_error}</div>")
-
-    confirmation_html_parts.extend([
-        "        <h1>Obrigado!</h1>",
-        "        <p>Sua presença foi registrada com sucesso!</p>",
-        "        <h3>Detalhes da sua Confirmação:</h3>",
-        f"        <p><strong>Cidade:</strong> {city}</p>",
-        f"        <p><strong>Grupo:</strong> {group}</p>",
-        f"        <p><strong>Número de Pessoas:</strong> {num_people}</p>",
-        f"        <p><strong>Telefone:</strong> {phone_number}</p>",
-        f"        <p><strong>Valor Pago (Pix):</strong> R$ {pix_amount:.2f}</p>",
-        f"        <p><strong>Descrição Pix (para Planilha):</strong> {pix_description_gs}</p>",
-        "        <h4>Participantes:</h4>",
-        "        <ul>"
-    ])
-    if names:
-        for i, name in enumerate(names):
-            veg_status = "Sim" if vegetarian_options and i < len(vegetarian_options) and vegetarian_options[i] else "Não"
-            confirmation_html_parts.append(f"            <li>{name} (Vegetariano: {veg_status})</li>")
-    confirmation_html_parts.append("        </ul>")
-    confirmation_html_parts.append("        <br><p><a href=\"/\">Iniciar Novo RSVP</a></p>")
-    confirmation_html_parts.append("    </div>")
-    confirmation_html_parts.append("</body>")
-    confirmation_html_parts.append("</html>")
-    
-    return "\n".join(confirmation_html_parts)
+    return render_template('confirmation.html', names=names_str, num_people=num_people)
 
 @app.route('/number-of-people', methods=['GET', 'POST'])
 def number_of_people():
