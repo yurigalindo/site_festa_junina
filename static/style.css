@@ -1,0 +1,116 @@
+/* Global styles for Arraiá da Laura RSVP System */
+
+body {
+    font-family: sans-serif;
+    margin: 20px;
+    background-color: #f4f4f4; /* Common background color */
+    color: #333; /* Common text color */
+    text-align: center; /* Common text alignment */
+}
+
+.container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    display: inline-block;
+    text-align: left;
+    max-width: 500px; /* Default max-width, can be overridden */
+    margin-top: 2rem; /* Common margin-top */
+}
+
+.container-md {
+    max-width: 600px;
+}
+
+/* Bootstrap overrides or custom button styles can go here if needed */
+/* For example, ensure consistent button sizing or colors if Bootstrap defaults are not desired */
+
+.error-message, .error /* .error from names_form.html */ {
+    color: red;
+    margin-bottom: 10px;
+}
+
+.page-title {
+    /* Example: common styling for main page titles if needed beyond h1 defaults */
+    margin-bottom: 1.5rem;
+}
+
+.text-success {
+    /* This class is used from Bootstrap, ensure it meets desired color if not using Bootstrap CSS, or if overriding */
+    /* color: #198754; /* Default Bootstrap success color */
+}
+
+/* Styles moved from names_form.html */
+h1 {
+    color: #333; /* Was in names_form.html, good global default if not using Bootstrap h1 styles */
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+}
+
+.label-inline {
+    display: inline;
+    margin-top: 0; /* Override block margin if necessary */
+}
+
+input[type="text"], input[type="checkbox"] {
+    margin-bottom: 10px;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+input[type="checkbox"] {
+    margin-right: 5px;
+    vertical-align: middle;
+}
+
+/* General button style if not relying on Bootstrap for all buttons */
+/* This was a very specific button style, might need to be a class like .btn-custom-green */
+/* For now, let's assume Bootstrap buttons are primary and this is a specific case */
+.btn-custom-green {
+    background-color: #5cb85c;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-custom-green:hover {
+    background-color: #4cae4c;
+}
+
+.person-entry {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.person-entry:last-child {
+    border-bottom: none;
+}
+
+/* Styles from pix_payment.html */
+.qr-code-image {
+    max-width: 300px;
+}
+
+.pix-payload-text-area {
+    max-height: 100px;
+    overflow-y: auto;
+    word-wrap: break-word;
+    font-family: monospace;
+}
+
+/* Style from confirmation.html */
+.card {
+    margin-top: 50px; /* As per confirmation.html */
+    /* Note: Bootstrap .card already has many styles. This adds/overrides margin-top. */
+}
+
+/* Add more shared styles as we refactor templates */ 

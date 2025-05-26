@@ -7,7 +7,7 @@ from .models import db, RSVP # Changed to relative import
 # Pix utilities are no longer directly used in app.py, they are used in the blueprint
 
 # Adjusted Flask app initialization for templates at root and instance folder
-app = Flask(__name__, template_folder='../templates', instance_relative_config=True)
+app = Flask(__name__, template_folder='../templates', static_folder='../static', instance_relative_config=True)
 
 # Ensure the instance folder exists before configuring the database URI
 # or doing anything else that might depend on it.
