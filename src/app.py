@@ -9,6 +9,9 @@ from .models import db, RSVP # Changed to relative import
 # Adjusted Flask app initialization for templates at root and instance folder
 app = Flask(__name__, template_folder='../templates', static_folder='../static', instance_relative_config=True)
 
+# Set the instance path to be at the project root level
+app.instance_path = os.path.abspath(os.path.join(app.root_path, '..', 'instance'))
+
 # Ensure the instance folder exists before configuring the database URI
 # or doing anything else that might depend on it.
 try:
