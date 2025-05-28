@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
 
 from .models import db, RSVP
-from .utils import generate_pix_payload, calculate_crc16, generate_qr_code_base64
+from .utils import generate_pix_payload
 
 
 rsvp_bp = Blueprint('rsvp', __name__, template_folder='../templates')
@@ -155,18 +155,11 @@ def pix_payment_form():
     if len(pix_description) > 70:
         pix_description = pix_description[:67] + "..."
 
-    txid = "***"
-
-    pix_payload = generate_pix_payload(
-        pix_key=current_app.config['PIX_KEY'], 
-        merchant_name="Arraia da Laura",
-        merchant_city="SJC",
-        amount_str=amount_str,
-        description=pix_description,
-        txid=txid
+    pix_payload, pix_image_b64 = generate_pix_payload(
+        amount=num_people,
+        names=pix_description
     )
     
-    qr_image_base64 = generate_qr_code_base64(pix_payload)
     
     session['amount'] = amount
     session['pix_payload'] = pix_payload
@@ -180,7 +173,7 @@ def pix_payment_form():
 
     return render_template(
         'pix_payment.html',
-        qr_image=qr_image_base64,
+        qr_image=pix_image_b64,
         pix_payload=pix_payload,
         amount_str=amount_str,
         instructions=payment_instructions

@@ -14,7 +14,7 @@
         <p class="amount text-center fs-5 fw-bold mb-3">Valor a pagar: R$ {{ amount_str }}</p>
 
         <div class="qr-code-container text-center mb-4">
-            <img src="data:image/png;base64,{{ qr_image }}" alt="Pix QR Code" class="img-fluid border p-1 mx-auto d-block qr-code-image">
+            <img src="{{ qr_image }}" alt="Pix QR Code" class="img-fluid border p-1 mx-auto d-block qr-code-image">
         </div>
 
         <div class="payload-header fw-bold mb-1">Pix Copia e Cola:</div>
