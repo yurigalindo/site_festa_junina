@@ -1,6 +1,6 @@
 from flask import Flask, redirect, url_for, session
 import os # Moved import os to the top
-# Removed base64, io, qrcode, datetime, and SQLAlchemy direct imports as they are now handled in utils.py and models.py
+from dotenv import load_dotenv
 
 from .routes import rsvp_bp # Changed to relative import
 from .models import db, RSVP # Changed to relative import
@@ -21,7 +21,7 @@ except OSError:
     # For now, we'll let it raise if it's a real issue other than "already exists"
     pass 
 
-app.config['SECRET_KEY'] = 'your_very_secret_key_here'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['PIX_KEY'] = 'YOUR_ACTUAL_PIX_KEY_HERE' 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rsvp.db' # This will be in instance/rsvp.db if instance_relative_config is True and path is not absolute
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
