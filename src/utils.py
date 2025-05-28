@@ -9,12 +9,17 @@ load_dotenv()
 
 # --- Pix Helper Functions ---
 def generate_pix_payload(amount, names):
+    if len(names) > 25:
+        pix_id = names[:25]
+    else:
+        pix_id = names
     pix_obj = generate_simple_pix(
         key=os.getenv('PIX_KEY'),
         fullname=os.getenv('MERCHANT_NAME'),
         city=os.getenv('MERCHANT_CITY'),
         value=15*amount,
-        description=names
+        description=names,
+        pix_id=pix_id
     )
     payload_string = str(pix_obj) # This is the "Copia e Cola" text
     payload_image_b64 = pix_obj.toBase64() # This is the QR code image in base64
