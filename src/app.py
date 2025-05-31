@@ -99,7 +99,7 @@ def access_denied():
 # Main index route, redirects to the blueprint's starting point
 @app.route('/')
 def index():
-    return redirect(url_for('rsvp.select_city'))
+    return redirect(url_for('rsvp.welcome'))
 
 # Pix Helper Functions and RSVP Model have been moved to utils.py and models.py respectively.
 

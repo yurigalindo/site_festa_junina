@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block title %}Bem-vindo ao Arraiá da Laura{% endblock %}
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1 class="text-success text-center mb-4 page-title">Bem-vindo ao Arraiá da Laura!</h1>
+    <p class="lead">Estamos muito felizes em convidá-lo para participar da nossa festa junina.</p>
+    <p>Aqui você poderá confirmar sua presença, e fazer a contribuição para nossas comidinhas.</p>
+    <p>Prepare sua roupa de festa junina e venha se divertir!</p>
+    <a href="{{ url_for('rsvp.select_city') }}" class="btn btn-primary btn-lg">Continuar</a>
+</div>
+{% endblock %} 

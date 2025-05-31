@@ -13,6 +13,21 @@ CITY_GROUP_OPTIONS = {
 }
 
 @rsvp_bp.route('/', methods=['GET', 'POST'])
+@rsvp_bp.route('/welcome')
+def welcome():
+    # Clear any existing session data when the user lands on the welcome page
+    session.pop('city', None)
+    session.pop('group', None)
+    session.pop('number_of_people', None)
+    session.pop('names', None)
+    session.pop('vegetarian_options', None)
+    session.pop('phone_number', None)
+    session.pop('pix_qr_code', None) 
+    session.pop('amount', None)
+    session.pop('pix_description', None)
+    return render_template('welcome.html')
+
+
 @rsvp_bp.route('/city', methods=['GET', 'POST'])
 def select_city():
     if request.method == 'POST':
@@ -24,12 +39,13 @@ def select_city():
             error = "Por favor, selecione uma cidade válida."
             return render_template('city_selection.html', cities=CITY_GROUP_OPTIONS.keys(), error=error)
     
-    session.pop('city', None)
-    session.pop('group', None)
-    session.pop('number_of_people', None)
-    session.pop('names', None)
-    session.pop('vegetarian_options', None)
-    session.pop('phone_number', None)
+    # Session clearing moved to the welcome route
+    # session.pop('city', None)
+    # session.pop('group', None)
+    # session.pop('number_of_people', None)
+    # session.pop('names', None)
+    # session.pop('vegetarian_options', None)
+    # session.pop('phone_number', None)
 
     return render_template('city_selection.html', cities=CITY_GROUP_OPTIONS.keys())
 
