@@ -14,8 +14,8 @@
 
         <form method="POST">
             <div class="mb-3">
-                <label for="phone_number" class="form-label">Qual seu telefone?</label>
-                <input type="tel" id="phone_number" name="phone_number" class="form-control form-control-lg" value="{{ phone_number if phone_number else '' }}" placeholder="(XX) XXXXX-XXXX" required>
+                <label for="phone_number" class="form-label">Qual seu telefone? (apenas números)</label>
+                <input type="text" id="phone_number" name="phone_number" class="form-control form-control-lg" value="{{ phone_number if phone_number else '' }}" placeholder="Apenas números (ex: 12999998888)" pattern="\d{1,20}" maxlength="20" required>
             </div>
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <a href="{{ url_for('rsvp.names_form') }}" class="btn btn-secondary btn-lg">Voltar</a>

@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, session, current_app
+import re # Add re for regex validation
 
 from .models import db, RSVP
 from .utils import generate_pix_payload
@@ -77,17 +78,28 @@ def names_form():
         return redirect(url_for('rsvp.select_city'))
 
     num_people = session['number_of_people']
+    # Regex to allow letters (including accented) and spaces. Allows empty strings initially, 
+    # but the 'not name' check below handles empty required fields.
+    name_pattern = re.compile(r"^[a-zA-ZÀ-ÿ ]+$")
 
     if request.method == 'POST':
         names = []
         error_message = None
+        submitted_names = [request.form.get(f'name_{k}') or "" for k in range(1, num_people + 1)]
 
         for i in range(1, num_people + 1):
             name = request.form.get(f'name_{i}')
             
             if not name:
                 error_message = f"Por favor, informe o nome da pessoa {i}."
-                submitted_names = [request.form.get(f'name_{k}') for k in range(1, num_people + 1)]
+                return render_template('names_form.html',
+                                       num_people=num_people,
+                                       error=error_message,
+                                       names=submitted_names)
+            
+            # Validate name format
+            if not name_pattern.match(name):
+                error_message = f"O nome da pessoa {i} ('{name}') deve conter apenas letras e espaços."
                 return render_template('names_form.html',
                                        num_people=num_people,
                                        error=error_message,
@@ -122,8 +134,15 @@ def contact_form():
 
     if request.method == 'POST':
         phone_number = request.form.get('phone_number')
+        error = None
         if not phone_number:
             error = "Por favor, informe seu telefone para contato."
+        elif not phone_number.isdigit():
+            error = "O telefone deve conter apenas números."
+        elif len(phone_number) > 20:
+            error = "O telefone deve ter no máximo 20 dígitos."
+        
+        if error:
             return render_template('contact_phone_form.html', error=error, phone_number=phone_number)
         
         session['phone_number'] = phone_number

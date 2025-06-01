@@ -17,7 +17,7 @@
             <div class="person-entry">
                 <h4>Pessoa {{ i }}</h4>
                 <label for="name_{{ i }}">Nome:</label>
-                <input type="text" id="name_{{ i }}" name="name_{{ i }}" value="{{ names[i-1] if names and names[i-1] is not none else '' }}" required class="form-control mb-2">
+                <input type="text" id="name_{{ i }}" name="name_{{ i }}" value="{{ names[i-1] if names and names[i-1] is not none else '' }}" required class="form-control mb-2" pattern="^[a-zA-ZÀ-ÿ ]+$">
                 
             </div>
             {% endfor %}
