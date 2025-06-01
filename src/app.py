@@ -78,22 +78,17 @@ app.register_blueprint(rsvp_bp) # Register the blueprint
 @app.route('/access-denied')
 def access_denied():
     error_type = request.args.get('error')
-    title = "Acesso Restrito"
-    message = "Você não tem permissão para acessar esta página."
-    instructions = "Por favor, utilize o link de acesso com o PIN correto."
+    title = "Opa, cadê a senha?"
+    message = "Este site é apenas para convidados e precisa de um link especial para ser acessado."
+    instructions = "Se você é convidado, confira se você acessou o link correto. Se continuar tendo problemas, entre em contato com a Laura."
 
     if error_type == "config_error":
         title = "Erro de Configuração"
         message = "O sistema de acesso não está configurado corretamente."
-        instructions = "Por favor, entre em contato com o administrador do site."
+        instructions = "Por favor, entre em contato com a Laura e avise do problema."
     elif error_type == "invalid_pin":
-        title = "PIN Inválido"
-        message = "O PIN fornecido no link de acesso é inválido."
-        instructions = "Por favor, verifique o link e tente novamente. Certifique-se de que o PIN tem 18 dígitos."
-    elif error_type == "no_pin":
-        title = "PIN Necessário"
-        message = "Este site requer um PIN para acesso."
-        instructions = "Por favor, utilize o link de acesso que contém o PIN."
+        title = "Este link não é válido"
+        message += " O link utilizado está errado."
     
     return render_template('access_denied.html', title=title, message=message, instructions=instructions), 403
 

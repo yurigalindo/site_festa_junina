@@ -4,7 +4,9 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1 class="text-success text-center mb-4 page-title">Quantas pessoas você quer confirmar presença?</h1>
+        <h1 class="text-success text-center mb-4 page-title">Quantas pessoas estão confirmando no total?</h1>
+        <h2 class="h4 mb-4 text-center text-muted">(Lembrando que convidado não convida)</h2>
+
 
         {% if error %}
             <div class="alert alert-danger error-message" role="alert">
@@ -17,10 +19,10 @@
                 <label for="num_people" class="form-label">Número de pessoas:</label>
                 <input type="number" id="num_people" name="num_people" class="form-control form-control-lg" min="1" max="10" value="{{ num_people if num_people else 1 }}" required>
             </div>
-            <p class="form-text text-muted mb-3">(Lembrando que convidado não convida) Você pode aproveitar para confirmar seu filho, companheiro ou pais.</p>
+            <p class="form-text text-muted mb-3">Você pode aproveitar para confirmar seus filhos, pais, ou companheiro.</p>
             <div class="d-flex justify-content-between align-items-center mt-4">
                 <a href="{{ url_for('rsvp.select_group') }}" class="btn btn-secondary btn-lg">Voltar</a>
-                <button type="submit" class="btn btn-primary btn-lg w-100 ms-3">Continuar</button>
+                <button type="submit" class="btn btn-primary btn-lg w-100 ms-3">Avançar</button>
             </div>
         </form>
     </div>

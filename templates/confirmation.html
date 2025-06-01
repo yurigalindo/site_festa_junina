@@ -3,21 +3,11 @@
 {% block title %}Confirmação{% endblock %}
 
 {% block content %}
-    <div class="container container-md">
-        <div class="card text-center">
-            <div class="card-header">
-                Confirmação de Presença
-            </div>
-            <div class="card-body">
-                <h1 class="card-title text-success">Obrigado!</h1>
-                <p class="card-text">Sua presença foi registrada com sucesso!</p>
-                <p class="card-text"><strong>Participantes:</strong> {{ names }}</p>
-                <p class="card-text"><strong>Número de Pessoas:</strong> {{ num_people }}</p>
-                <a href="{{ url_for('rsvp.select_city') }}" class="btn btn-primary mt-3">Iniciar Novo RSVP</a>
-            </div>
-            <div class="card-footer text-muted">
-                Arraiá da Laura
-            </div>
-        </div>
+    <div class="container mt-5 text-center">
+        <h1 class="text-success mb-4 page-title">Irráa!</h1>
+        <p class="fs-5">Ficaremos muito felizes com a sua presença!</p>
+        <p class="fs-5">Estaremos te esperando no <strong>LOCAL, no dia 5 de Julho</strong></p>
+        <p class="fs-5">Teremos Vinho Quente e Quentão, mas fique a vontade para levar cooler com suas bebidas de preferência.</p>
+        <p class="fs-5"><strong>Convidados confirmados:</strong> {{ names }}</p>
     </div>
 {% endblock %} 

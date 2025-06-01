@@ -166,8 +166,9 @@ def pix_payment_form():
     session['pix_description'] = pix_description
 
     payment_instructions = (
+        "Estamos arrecadando 15 reais por convidados. Teremos comidas de Festa Junina, Quentão e Vinho Quente.<br>"
         f"O valor total da sua contribuição é de R$ {amount_str}.<br>"
-        "Por favor, faça o pagamento via Pix utilizando o QR Code abaixo ou a chave Copia e Cola.<br>"
+        "Por favor, realize o pix utilizando o QR Code abaixo ou a chave Copia e Cola.<br>"
         "Após o pagamento, clique em 'Fiz o Pix!' para confirmar sua presença."
     )
 

@@ -4,8 +4,10 @@
 
 {% block content %}
     <div class="container mt-5">
-        <h1 class="text-success mb-4 text-center page-title">Passo 2: Selecione seu Grupo</h1>
-        <h2 class="h4 mb-4 text-center text-muted">Cidade selecionada: {{ city }}</h2>
+        <h1 class="text-success mb-4 text-center page-title">Selecione seu Grupo</h1>
+        <h2 class="h4 mb-4 text-center text-muted">Selecione de qual grupo de amigos você faz parte</h2>
+        <p class="form-text text-muted mb-3">Se nenhum desses grupos se encaixa com você, entre em contato com a Laura.</p> 
+
         <form method="POST">
             {% if error %}
                 <div class="alert alert-danger error-message" role="alert">
