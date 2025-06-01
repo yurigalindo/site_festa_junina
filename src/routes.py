@@ -8,8 +8,8 @@ rsvp_bp = Blueprint('rsvp', __name__, template_folder='../templates')
 
 # Hardcoded city and group data
 CITY_GROUP_OPTIONS = {
-    "São José dos Campos": ["Amigos do Noivo", "Amigas da Noiva", "Família do Noivo", "Família da Noiva", "Amigos dos Pais"],
-    "Taubaté": ["Amigos de Taubaté", "Família de Taubaté", "Trabalho"]
+    "São José dos Campos": ["Família do Yuri", "Cia. do Trailer", "Teatro da Cidade", "Família Froes", "Chicos e Chicas", "Javanês"],
+    "Taubaté": ["Família da Laura", "Café 🏳️‍🌈", "Impostoras","Primos e Agregados","Dança Comigo","Mariposa Brasileiro","Med Lucinda"]
 }
 
 @rsvp_bp.route('/', methods=['GET', 'POST'])
