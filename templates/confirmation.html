@@ -3,11 +3,12 @@
 {% block title %}Confirmação{% endblock %}
 
 {% block content %}
-    <div class="container mt-5 text-center">
-        <h1 class="text-success mb-4 page-title">Irráa!</h1>
-        <p class="fs-5">Ficaremos muito felizes com a sua presença!</p>
-        <p class="fs-5">Estaremos te esperando no <strong>LOCAL, no dia 5 de Julho</strong></p>
+    <div class="container text-center mt-5">
+        <h1 class="text-success text-center mb-4 page-title">Irráa!</h1>
+        <p class="fs-5">Ficamos felizes com sua presença, {{ names }}!</p>
+        <p class="fs-5">Estaremos te esperando no <strong>{{ event_address if event_address else 'LOCAL A SER DEFINIDO' }}, no dia 5 de Julho</strong></p>
         <p class="fs-5">Teremos Vinho Quente e Quentão, mas fique a vontade para levar cooler com suas bebidas de preferência.</p>
-        <p class="fs-5"><strong>Convidados confirmados:</strong> {{ names }}</p>
+        <hr>
+        <p>Em caso de dúvidas, entre em contato com a Laura.</p>
     </div>
 {% endblock %} 

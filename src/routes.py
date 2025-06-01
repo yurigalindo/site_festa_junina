@@ -221,7 +221,9 @@ def confirmation():
     session.pop('amount', None)
     session.pop('pix_description', None)
 
-    return render_template('confirmation.html', names=names_str, num_people=num_people)
+    event_address = current_app.config.get('EVENT_ADDRESS', 'LOCAL A SER DEFINIDO') # Get address from config
+
+    return render_template('confirmation.html', names=names_str, num_people=num_people, event_address=event_address)
 
 @rsvp_bp.route('/number-of-people', methods=['GET', 'POST'])
 def number_of_people():

@@ -27,6 +27,7 @@ except OSError:
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['PIX_KEY'] = os.getenv('PIX_KEY')
 app.config['ACCESS_PIN'] = os.getenv('ACCESS_PIN') # Added for PIN protection
+app.config['EVENT_ADDRESS'] = os.getenv('EVENT_ADDRESS') # Added for event address
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rsvp.db' # This will be in instance/rsvp.db if instance_relative_config is True and path is not absolute
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 7776000 # Cache static files for 3 months
