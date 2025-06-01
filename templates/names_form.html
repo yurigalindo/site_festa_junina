@@ -19,8 +19,6 @@
                 <label for="name_{{ i }}">Nome:</label>
                 <input type="text" id="name_{{ i }}" name="name_{{ i }}" value="{{ names[i-1] if names and names[i-1] is not none else '' }}" required class="form-control mb-2">
                 
-                <input type="checkbox" id="vegetarian_{{ i }}" name="vegetarian_{{ i }}" {% if vegetarian_options and vegetarian_options[i-1] %}checked{% endif %} class="form-check-input">
-                <label for="vegetarian_{{ i }}" class="form-check-label label-inline">Vegetariano?</label>
             </div>
             {% endfor %}
             <div class="d-flex justify-content-between align-items-center mt-4">

@@ -20,11 +20,9 @@ def welcome():
     session.pop('group', None)
     session.pop('number_of_people', None)
     session.pop('names', None)
-    session.pop('vegetarian_options', None)
     session.pop('phone_number', None)
     session.pop('pix_qr_code', None) 
     session.pop('amount', None)
-    session.pop('pix_description', None)
     return render_template('welcome.html')
 
 
@@ -44,7 +42,6 @@ def select_city():
     # session.pop('group', None)
     # session.pop('number_of_people', None)
     # session.pop('names', None)
-    # session.pop('vegetarian_options', None)
     # session.pop('phone_number', None)
 
     return render_template('city_selection.html', cities=CITY_GROUP_OPTIONS.keys())
@@ -69,7 +66,6 @@ def select_group():
     session.pop('group', None)
     session.pop('number_of_people', None)
     session.pop('names', None)
-    session.pop('vegetarian_options', None)
     session.pop('phone_number', None)
     return render_template('group_selection.html', city=city, groups=groups)
 
@@ -84,52 +80,40 @@ def names_form():
 
     if request.method == 'POST':
         names = []
-        vegetarian_options = []
         error_message = None
 
         for i in range(1, num_people + 1):
             name = request.form.get(f'name_{i}')
-            vegetarian = request.form.get(f'vegetarian_{i}') == 'on'
             
             if not name:
                 error_message = f"Por favor, informe o nome da pessoa {i}."
                 submitted_names = [request.form.get(f'name_{k}') for k in range(1, num_people + 1)]
-                submitted_veg_options = [request.form.get(f'vegetarian_{k}') == 'on' for k in range(1, num_people + 1)]
                 return render_template('names_form.html',
                                        num_people=num_people,
                                        error=error_message,
-                                       names=submitted_names,
-                                       vegetarian_options=submitted_veg_options)
+                                       names=submitted_names)
 
             names.append(name)
-            vegetarian_options.append(vegetarian)
         
         session['names'] = names
-        session['vegetarian_options'] = vegetarian_options
         return redirect(url_for('rsvp.contact_form'))
 
     retrieved_names = session.get('names', [])
-    retrieved_vegetarian_options = session.get('vegetarian_options', [])
 
     expected_names = [None] * num_people
-    expected_veg_options = [False] * num_people
 
     for i in range(min(len(retrieved_names), num_people)):
         expected_names[i] = retrieved_names[i]
     
-    for i in range(min(len(retrieved_vegetarian_options), num_people)):
-        expected_veg_options[i] = retrieved_vegetarian_options[i]
-
     return render_template(
         'names_form.html',
         num_people=num_people,
-        names=expected_names,
-        vegetarian_options=expected_veg_options
+        names=expected_names
     )
 
 @rsvp_bp.route('/contact', methods=['GET', 'POST'])
 def contact_form():
-    if 'names' not in session or 'vegetarian_options' not in session:
+    if 'names' not in session:
         return redirect(url_for('rsvp.names_form'))
     if 'city' not in session or 'group' not in session:
         return redirect(url_for('rsvp.select_city'))
@@ -197,7 +181,7 @@ def pix_payment_form():
 
 @rsvp_bp.route('/confirmation')
 def confirmation():
-    required_session_keys = ['city', 'group', 'number_of_people', 'names', 'vegetarian_options', 'phone_number', 'pix_description', 'amount']
+    required_session_keys = ['city', 'group', 'number_of_people', 'names', 'phone_number', 'pix_description', 'amount']
     for key in required_session_keys:
         if key not in session:
             print(f"Missing session key: {key} during confirmation step.")
@@ -207,11 +191,9 @@ def confirmation():
     group = session.get('group')
     num_people = session.get('number_of_people')
     names = session.get('names')
-    vegetarian_options = session.get('vegetarian_options')
     phone_number = session.get('phone_number')
 
     names_str = ", ".join(names)
-    veg_options_str = ", ".join(map(str, vegetarian_options))
 
     try:
         new_rsvp = RSVP(
@@ -219,7 +201,6 @@ def confirmation():
             group=group,
             num_people=num_people,
             names_str=names_str,
-            veg_options_str=veg_options_str,
             phone=phone_number,
         )
         db.session.add(new_rsvp)
@@ -234,7 +215,6 @@ def confirmation():
     session.pop('group', None)
     session.pop('number_of_people', None)
     session.pop('names', None)
-    session.pop('vegetarian_options', None)
     session.pop('phone_number', None)
     session.pop('pix_qr_code', None) 
     session.pop('amount', None)
@@ -260,7 +240,6 @@ def number_of_people():
                 else:
                     if session.get('number_of_people') != num_people:
                         session.pop('names', None)
-                        session.pop('vegetarian_options', None)
                     session['number_of_people'] = num_people
                     return redirect(url_for('rsvp.names_form'))
             except ValueError:
