@@ -193,19 +193,30 @@ def confirmation():
     names = session.get('names')
     phone_number = session.get('phone_number')
 
-    names_str = ", ".join(names)
+    # For database storage
+    names_str_db = ", ".join(names)
+
+    # For display on the confirmation page
+    if not names: # Should not happen if validation is correct
+        display_names = ""
+    elif len(names) == 1:
+        display_names = names[0]
+    elif len(names) == 2:
+        display_names = " e ".join(names)
+    else:
+        display_names = ", ".join(names[:-1]) + " e " + names[-1]
 
     try:
         new_rsvp = RSVP(
             city=city,
             group=group,
             num_people=num_people,
-            names_str=names_str,
+            names_str=names_str_db, # Use the original comma-separated string for DB
             phone=phone_number,
         )
         db.session.add(new_rsvp)
         db.session.commit()
-        print(f"RSVP data saved to database: {names_str}")
+        print(f"RSVP data saved to database: {names_str_db}")
     except Exception as e:
         db.session.rollback()
         print(f"Error saving RSVP to database: {e}")
@@ -222,7 +233,7 @@ def confirmation():
 
     event_address = current_app.config.get('EVENT_ADDRESS', 'LOCAL A SER DEFINIDO') # Get address from config
 
-    return render_template('confirmation.html', names=names_str, num_people=num_people, event_address=event_address)
+    return render_template('confirmation.html', names=display_names, num_people=num_people, event_address=event_address)
 
 @rsvp_bp.route('/number-of-people', methods=['GET', 'POST'])
 def number_of_people():
