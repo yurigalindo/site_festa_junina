@@ -12,11 +12,11 @@
             <img src="{{ qr_image }}" alt="Pix QR Code" class="img-fluid border p-1 mx-auto d-block qr-code-image">
         </div>
 
-        <div class="payload-header fw-bold mb-1">Pix Copia e Cola:</div>
+        <!-- <div class="payload-header fw-bold mb-1">Pix Copia e Cola:</div>
         <div class="pix-payload p-2 border rounded bg-light mb-3 pix-payload-text-area" id="pixPayloadText">
             {{ pix_payload }}
-        </div>
-        <button onclick="copyPixPayload()" class="btn btn-info btn-lg w-100 mb-4">Copiar Código</button>
+        </div> -->
+        <button onclick="copyPixPayload()" class="btn btn-info btn-lg w-100 mb-4" style="background-color: #FFC300; border-color: #f15e00;">Copiar Código</button>
         
         <form action="{{ url_for('rsvp.confirmation') }}" method="GET">
             <div class="d-flex justify-content-between align-items-center mt-4">

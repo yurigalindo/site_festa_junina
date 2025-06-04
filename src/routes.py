@@ -239,7 +239,7 @@ def confirmation():
     except Exception as e:
         db.session.rollback()
         print(f"Error saving RSVP to database: {e}")
-        return render_template('error.html', error_message="Ocorreu um erro ao salvar sua confirmação. Tente novamente.")
+        return render_template('error.html', error_message="Ocorreu um erro ao salvar sua confirmação. Por favor, tente novamente. Se já fez o Pix, não precisa fazer novamente, apenas clique em Fiz o Pix!")
 
     session.pop('city', None)
     session.pop('group', None)
