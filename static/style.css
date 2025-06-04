@@ -37,7 +37,23 @@ body {
 
 .page-title {
     /* Example: common styling for main page titles if needed beyond h1 defaults */
-    margin-bottom: 1.5rem;
+    /* Fallback for browsers that don't support the gradient text */
+    color: #ffe500;
+
+    /* Preenchimento dourado com degradê */
+    background: linear-gradient(90deg, #ffe500 0%, #FFC300 100%);
+    -webkit-background-clip: text;
+    background-clip: text; /* Standard property for better compatibility */
+    -webkit-text-fill-color: transparent;
+
+    /* Contorno ferrugem */
+    -webkit-text-stroke: 3px #f15e00;
+    text-stroke: 3px #f15e00; /* Standard property, support varies */
+
+    font-size: 3em;
+    font-weight: bold;
+    margin: 24px 0 16px 0;
+    text-align: center;
 }
 
 /* Styles moved from names_form.html */
@@ -112,4 +128,8 @@ input[type="checkbox"] {
     /* Note: Bootstrap .card already has many styles. This adds/overrides margin-top. */
 }
 
-/* Add more shared styles as we refactor templates */ 
+/* Add more shared styles as we refactor templates */
+
+.text-success {
+    color: #2166E4 !important; 
+} 
