@@ -85,12 +85,17 @@ body {
 */
 
 .page-title-svg {
-    display: block; /* To allow margin auto to work for centering */
-    margin: 0px auto; /* Reduced bottom margin, auto for horizontal centering */
-    width: 100%; /* Responsive width */
-    max-width: 600px; /* Max size for larger screens */
+    display: block; /* Still needed for width and positioning context */
+    /* margin: 0px auto; /* Replaced by transform-based centering */
+    width: 118%; /* Set to be wider than parent, e.g., 110%. Adjust as needed. */
+    max-width: 600px; /* Max size for larger screens still applies */
     min-width: 200px; /* Min size for smaller screens */
     height: auto; /* Maintain aspect ratio */
+    position: relative; /* Enable offset positioning */
+    left: 50%; /* Move left edge to parent's center */
+    transform: translateX(-50%); /* Shift element left by half its own width */
+    margin-top: 0px; /* Preserve original top margin */
+    margin-bottom: 0px; /* Preserve original bottom margin */
 }
 
 /* Styles moved from names_form.html */
