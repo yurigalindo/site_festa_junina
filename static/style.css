@@ -14,9 +14,9 @@ body {
     background-size: 
         /*600px auto,     /* bandeirinhas_top.svg: width 600px, height auto */
         600px auto,     /* bandeirinhas_center.svg: width 600px, height auto */
-        100px auto,     /* fogueira.svg: width 100px, height auto */
-        75px auto,     /* milho.svg: width 70px, height auto */
-        80px auto,     /* balao.svg: width 80px, height auto */
+        130px auto,     /* fogueira.svg: width 100px, height auto */
+        80px auto,     /* milho.svg: width 70px, height auto */
+        95px auto,     /* balao.svg: width 80px, height auto */
         cover;          /* abstract-texture-background-progressive.jpg: cover */
     background-repeat: 
         /*no-repeat,      /* bandeirinhas_top.svg */
@@ -28,9 +28,9 @@ body {
     background-position:
         /*center top,                       /* bandeirinhas_top.svg */
         center center,                       /* bandeirinhas_center.svg */
-        calc(50% - 125px) bottom,            /* fogueira.svg: 50% (center) - 200px, at bottom */
-        calc(50% + 125px) calc(100% - 60px),            /* milho.svg: 50% (center) + 200px, at bottom */
-        center calc(100% - 150px),
+        center bottom,            /* fogueira.svg: 50% (center) - 200px, at bottom */
+        calc(50% + 135px) calc(100% - 120px),            /* milho.svg: 50% (center) + 200px, at bottom */
+        calc(50% - 125px) calc(100% - 150px),
         center center;                       /* abstract-texture-background-progressive.jpg */
     background-attachment: fixed; /* Keep the background fixed during scroll */
     color: #333; /* Common text color */
@@ -45,7 +45,7 @@ body {
     display: inline-block;
     text-align: left;
     max-width: 500px; /* Default max-width, can be overridden */
-    margin-top: 2rem; /* Common margin-top */
+    margin-top: 1rem; /* Reduced from 2rem */
 }
 
 .container-md {
@@ -60,26 +60,37 @@ body {
     margin-bottom: 10px;
 }
 
+/*
 .page-title {
     /* Example: common styling for main page titles if needed beyond h1 defaults */
     /* Fallback for browsers that don't support the gradient text */
-    color: #ffe500;
+/*    color: #ffe500;
 
     /* Preenchimento dourado com degradê */
-    background: linear-gradient(90deg, #ffe500 0%, #FFC300 100%);
+/*    background: linear-gradient(90deg, #ffe500 0%, #FFC300 100%);
     -webkit-background-clip: text;
     background-clip: text; /* Standard property for better compatibility */
-    -webkit-text-fill-color: transparent;
+/*    -webkit-text-fill-color: transparent;
 
     /* Contorno ferrugem */
-    -webkit-text-stroke: 3.5px #f15e00;
+/*    -webkit-text-stroke: 3.5px #f15e00;
     text-stroke: 3.5px #f15e00; /* Standard property, support varies */
 
-    font-family: Verdana, sans-serif; /* Added Verdana font */
-    font-size: 3em;
+/*    font-family: Verdana, sans-serif; /* Added Verdana font */
+/*    font-size: 3em;
     font-weight: bold;
     margin: 24px 0 16px 0;
     text-align: center;
+}
+*/
+
+.page-title-svg {
+    display: block; /* To allow margin auto to work for centering */
+    margin: 0px auto; /* Reduced bottom margin, auto for horizontal centering */
+    width: 100%; /* Responsive width */
+    max-width: 600px; /* Max size for larger screens */
+    min-width: 200px; /* Min size for smaller screens */
+    height: auto; /* Maintain aspect ratio */
 }
 
 /* Styles moved from names_form.html */
