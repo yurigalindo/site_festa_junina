@@ -87,7 +87,7 @@ body {
 .page-title-svg {
     display: block; /* Still needed for width and positioning context */
     /* margin: 0px auto; /* Replaced by transform-based centering */
-    width: 118%; /* Set to be wider than parent, e.g., 110%. Adjust as needed. */
+    width: 114%; /* Set to be wider than parent, e.g., 110%. Adjust as needed. */
     max-width: 600px; /* Max size for larger screens still applies */
     min-width: 200px; /* Min size for smaller screens */
     height: auto; /* Maintain aspect ratio */
