@@ -13,10 +13,10 @@ body {
         url("images/abstract-texture-background-progressive.jpg"); /* Existing background image */
     background-size: 
         /*600px auto,     /* bandeirinhas_top.svg: width 600px, height auto */
-        600px auto,     /* bandeirinhas_center.svg: width 600px, height auto */
-        130px auto,     /* fogueira.svg: width 100px, height auto */
-        80px auto,     /* milho.svg: width 70px, height auto */
-        95px auto,     /* balao.svg: width 80px, height auto */
+        min(100vw, 600px) auto,     /* bandeirinhas_center.svg: responsive, max 600px */
+        min(25vw, 130px) auto,     /* fogueira.svg: responsive, max 130px */
+        min(17vw, 80px) auto,       /* milho.svg: responsive, max 80px */
+        min(21vw, 95px) auto,       /* balao.svg: responsive, max 95px */
         cover;          /* abstract-texture-background-progressive.jpg: cover */
     background-repeat: 
         /*no-repeat,      /* bandeirinhas_top.svg */
@@ -28,9 +28,9 @@ body {
     background-position:
         /*center top,                       /* bandeirinhas_top.svg */
         center center,                       /* bandeirinhas_center.svg */
-        center bottom,            /* fogueira.svg: 50% (center) - 200px, at bottom */
-        calc(50% + 135px) calc(100% - 120px),            /* milho.svg: 50% (center) + 200px, at bottom */
-        calc(50% - 125px) calc(100% - 150px),
+        center bottom,                       /* fogueira.svg */
+        calc(50% + min(26vw, 135px)) calc(100% - min(15vh, 120px)), /* milho.svg */
+        calc(50% - min(22vw, 125px)) calc(100% - min(18vh, 150px)), /* balao.svg */
         center center;                       /* abstract-texture-background-progressive.jpg */
     background-attachment: fixed; /* Keep the background fixed during scroll */
     color: #333; /* Common text color */
