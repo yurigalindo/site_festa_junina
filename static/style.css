@@ -47,8 +47,8 @@ body {
     -webkit-text-fill-color: transparent;
 
     /* Contorno ferrugem */
-    -webkit-text-stroke: 3px #f15e00;
-    text-stroke: 3px #f15e00; /* Standard property, support varies */
+    -webkit-text-stroke: 3.5px #f15e00;
+    text-stroke: 3.5px #f15e00; /* Standard property, support varies */
 
     font-size: 3em;
     font-weight: bold;
