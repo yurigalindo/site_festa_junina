@@ -87,7 +87,7 @@ def access_denied():
         title = "Este link não é válido"
         message += " O link utilizado está errado."
     
-    return render_template('access_denied.html', title=title, message=message, instructions=instructions), 403
+    return render_template('access_denied.html', title=title, message=message, instructions=instructions), 200
 
 @app.route('/robots.txt')
 def robots_txt():
