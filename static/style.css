@@ -5,24 +5,32 @@ body {
     margin: 20px;
     background-color: rgb(219, 152, 76); /* Common background color */
     background-image: 
+        /*url("images/bandeirinhas_top.svg"), /* Corrected filename, Centered SVG, topmost */
         url("images/bandeirinhas_center.svg"), /* Corrected filename, Centered SVG, topmost */
         url("images/fogueira.svg"),            /* Fogueira SVG */
         url("images/milho.svg"),               /* Milho SVG */
+        url("images/balao.svg"),               /* Balao SVG */
         url("images/abstract-texture-background-progressive.jpg"); /* Existing background image */
     background-size: 
+        /*600px auto,     /* bandeirinhas_top.svg: width 600px, height auto */
         600px auto,     /* bandeirinhas_center.svg: width 600px, height auto */
         100px auto,     /* fogueira.svg: width 100px, height auto */
-        100px auto,     /* milho.svg: width 100px, height auto */
+        75px auto,     /* milho.svg: width 70px, height auto */
+        80px auto,     /* balao.svg: width 80px, height auto */
         cover;          /* abstract-texture-background-progressive.jpg: cover */
     background-repeat: 
+        /*no-repeat,      /* bandeirinhas_top.svg */
         no-repeat,      /* bandeirinhas_center.svg */
         no-repeat,      /* fogueira.svg */
         no-repeat,      /* milho.svg */
+        no-repeat,      /* balao.svg */
         no-repeat;      /* abstract-texture-background-progressive.jpg */
     background-position:
+        /*center top,                       /* bandeirinhas_top.svg */
         center center,                       /* bandeirinhas_center.svg */
         calc(50% - 125px) bottom,            /* fogueira.svg: 50% (center) - 200px, at bottom */
-        calc(50% + 125px) bottom,            /* milho.svg: 50% (center) + 200px, at bottom */
+        calc(50% + 125px) calc(100% - 60px),            /* milho.svg: 50% (center) + 200px, at bottom */
+        center calc(100% - 150px),
         center center;                       /* abstract-texture-background-progressive.jpg */
     background-attachment: fixed; /* Keep the background fixed during scroll */
     color: #333; /* Common text color */
@@ -67,6 +75,7 @@ body {
     -webkit-text-stroke: 3.5px #f15e00;
     text-stroke: 3.5px #f15e00; /* Standard property, support varies */
 
+    font-family: Verdana, sans-serif; /* Added Verdana font */
     font-size: 3em;
     font-weight: bold;
     margin: 24px 0 16px 0;
