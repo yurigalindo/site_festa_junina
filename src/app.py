@@ -1,6 +1,6 @@
 import os # Moved import os to the top
 from dotenv import load_dotenv
-from flask import Flask, redirect, url_for, session, request, current_app, render_template # Added request, current_app, render_template
+from flask import Flask, redirect, url_for, session, request, current_app, render_template, send_from_directory # Added request, current_app, render_template, send_from_directory
 from .config import Config # Updated import to be relative
 
 load_dotenv() # Ensure .env is loaded
@@ -88,6 +88,10 @@ def access_denied():
         message += " O link utilizado está errado."
     
     return render_template('access_denied.html', title=title, message=message, instructions=instructions), 403
+
+@app.route('/robots.txt')
+def robots_txt():
+    return send_from_directory(os.path.join(app.root_path, '..'), 'robots.txt')
 
 # Main index route, redirects to the blueprint's starting point
 @app.route('/')
