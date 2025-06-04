@@ -43,7 +43,7 @@ with app.app_context():
 @app.before_request
 def require_pin_access():
     # Allow access to the 'access_denied' route and static files without PIN
-    if request.endpoint and (request.endpoint == 'access_denied' or request.endpoint.startswith('static')):
+    if request.endpoint and (request.endpoint == 'access_denied' or request.endpoint.startswith('static') or request.endpoint == 'robots_txt'):
         return
 
     master_pin = current_app.config.get('ACCESS_PIN')
