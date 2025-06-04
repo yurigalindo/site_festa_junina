@@ -7,3 +7,4 @@ Flask-SQLAlchemy
 SQLAlchemy
 gunicorn
 pybrcode
+psycopg2-binary

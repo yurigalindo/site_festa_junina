@@ -1,16 +1,17 @@
 import os # Moved import os to the top
 from dotenv import load_dotenv
+from flask import Flask, redirect, url_for, session, request, current_app, render_template # Added request, current_app, render_template
+from .config import Config # Updated import to be relative
 
 load_dotenv() # Ensure .env is loaded
 
-from flask import Flask, redirect, url_for, session, request, current_app, render_template # Added request, current_app, render_template
-
 from .routes import rsvp_bp # Changed to relative import
-from .models import db, RSVP # Changed to relative import
+from .models import db, RSVP # Changed to relative import. db is initialized in models.py
 # Pix utilities are no longer directly used in app.py, they are used in the blueprint
 
 # Adjusted Flask app initialization for templates at root and instance folder
 app = Flask(__name__, template_folder='../templates', static_folder='../static', instance_relative_config=True)
+app.config.from_object(Config) # New configuration loading
 
 # Set the instance path to be at the project root level
 app.instance_path = os.path.abspath(os.path.join(app.root_path, '..', 'instance'))
@@ -28,13 +29,8 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['PIX_KEY'] = os.getenv('PIX_KEY')
 app.config['ACCESS_PIN'] = os.getenv('ACCESS_PIN') # Added for PIN protection
 app.config['EVENT_ADDRESS'] = os.getenv('EVENT_ADDRESS') # Added for event address
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rsvp.db' # This will be in instance/rsvp.db if instance_relative_config is True and path is not absolute
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 7776000 # Cache static files for 3 months
-
-# Configure database URI to be in the instance folder
-# This is a common pattern, ensures the db is not in the source tree.
-app.config['SQLALCHEMY_DATABASE_URI'] = f"sqlite:///{app.instance_path}/rsvp.db"
 
 db.init_app(app) # Initialize SQLAlchemy with the app
 
