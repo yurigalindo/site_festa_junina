@@ -3,8 +3,8 @@
 body {
     font-family: sans-serif;
     margin: 20px;
-    background-color: #f4f4f4; /* Common background color */
-    background-image: url("images/abstract-texture-background.jpg"); /* Added background image */
+    background-color: rgb(219, 152, 76); /* Common background color */
+    background-image: url("images/abstract-texture-background-progressive.jpg"); /* Added background image */
     background-size: cover; /* Ensure the background covers the entire page */
     background-repeat: no-repeat; /* Prevent the image from repeating */
     background-attachment: fixed; /* Keep the background fixed during scroll */
@@ -13,7 +13,7 @@ body {
 }
 
 .container {
-    background-color: #fff;
+    background-color:  #f4f4f4; /* Added transparency to the background color */
     padding: 20px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
