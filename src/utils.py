@@ -9,10 +9,11 @@ load_dotenv()
 
 # --- Pix Helper Functions ---
 def generate_pix_payload(amount, names):
-    if len(names) > 25:
-        pix_id = names[:25]
+    pix_id = names.replace(" ", "").replace(",", "")
+    if len(pix_id) > 25:
+        pix_id = pix_id[:25]
     else:
-        pix_id = names
+        pix_id = pix_id
     pix_obj = generate_simple_pix(
         key=os.getenv('PIX_KEY'),
         fullname=os.getenv('MERCHANT_NAME'),
