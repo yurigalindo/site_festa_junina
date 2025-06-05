@@ -80,7 +80,7 @@ def names_form():
     num_people = session['number_of_people']
     # Regex to allow letters (including accented) and spaces. Allows empty strings initially, 
     # but the 'not name' check below handles empty required fields.
-    name_pattern = re.compile(r"^[a-zA-ZÀ-ÿ ]+$")
+    name_pattern = re.compile(r"^[a-zA-Z ]+$")
 
     if request.method == 'POST':
         names = []
@@ -99,7 +99,7 @@ def names_form():
             
             # Validate name format
             if not name_pattern.match(name):
-                error_message = f"O nome da pessoa {i} ('{name}') deve conter apenas letras e espaços."
+                error_message = f"O nome da pessoa {i} ('{name}') deve conter apenas letras (sem acentos) e espaços."
                 return render_template('names_form.html',
                                        num_people=num_people,
                                        error=error_message,
