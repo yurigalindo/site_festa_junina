@@ -282,4 +282,30 @@ def number_of_people():
             return render_template('number_of_people.html', error=error, num_people=num_people_str)
 
     num_people_value = session.get('number_of_people', '') 
-    return render_template('number_of_people.html', num_people=num_people_value) 
+    return render_template('number_of_people.html', num_people=num_people_value)
+
+@rsvp_bp.route('/confirmed-guests')
+def confirmed_guests():
+    # Get all RSVPs ordered by city and group
+    rsvps = RSVP.query.order_by(RSVP.city, RSVP.group, RSVP.timestamp).all()
+    
+    # Calculate total number of people
+    total_people = sum(rsvp.num_people for rsvp in rsvps)
+    
+    # Group RSVPs by city and group for better display
+    grouped_rsvps = {}
+    for rsvp in rsvps:
+        city = rsvp.city
+        group = rsvp.group
+        
+        if city not in grouped_rsvps:
+            grouped_rsvps[city] = {}
+        if group not in grouped_rsvps[city]:
+            grouped_rsvps[city][group] = []
+            
+        grouped_rsvps[city][group].append(rsvp)
+    
+    return render_template('confirmed_guests.html', 
+                         total_people=total_people, 
+                         grouped_rsvps=grouped_rsvps,
+                         total_rsvps=len(rsvps)) 

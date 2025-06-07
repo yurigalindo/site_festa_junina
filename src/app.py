@@ -28,6 +28,7 @@ except OSError:
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['PIX_KEY'] = os.getenv('PIX_KEY')
 app.config['ACCESS_PIN'] = os.getenv('ACCESS_PIN') # Added for PIN protection
+app.config['ADMIN_PIN'] = os.getenv('ADMIN_PIN') # Added for admin access to confirmed guests
 app.config['EVENT_ADDRESS'] = os.getenv('EVENT_ADDRESS') # Added for event address
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['SEND_FILE_MAX_AGE_DEFAULT'] = 7776000 # Cache static files for 3 months
@@ -46,28 +47,56 @@ def require_pin_access():
     if request.endpoint and (request.endpoint == 'access_denied' or request.endpoint.startswith('static') or request.endpoint == 'robots_txt'):
         return
 
-    master_pin = current_app.config.get('ACCESS_PIN')
+    # Check if this is the admin route
+    is_admin_route = request.endpoint == 'rsvp.confirmed_guests'
+    
+    access_pin = current_app.config.get('ACCESS_PIN')
+    admin_pin = current_app.config.get('ADMIN_PIN')
 
-    if not master_pin:
-        print("CRITICAL: ACCESS_PIN environment variable is not set. Site access is blocked.")
-        if request.endpoint != 'access_denied': # Avoid redirect loop
-             return redirect(url_for('access_denied', error="config_error"))
-        return 
+    if is_admin_route:
+        # Admin route requires admin PIN
+        if not admin_pin:
+            print("CRITICAL: ADMIN_PIN environment variable is not set. Admin access is disabled.")
+            if request.endpoint != 'access_denied':
+                return redirect(url_for('access_denied', error="config_error"))
+            return
 
-    if session.get('pin_verified'):
-        return
+        if session.get('admin_verified'):
+            return
 
-    provided_pin = request.args.get('access_pin')
+        provided_pin = request.args.get('admin_pin')
 
-    if provided_pin and provided_pin == master_pin:
-        session['pin_verified'] = True
-        # Redirect to remove the access_pin from the URL query parameters
-        clean_path = request.path
-        return redirect(clean_path)
+        if provided_pin and provided_pin == admin_pin:
+            session['admin_verified'] = True
+            # Redirect to remove the admin_pin from the URL query parameters
+            clean_path = request.path
+            return redirect(clean_path)
+        else:
+            error_reason = "invalid_admin_pin" if provided_pin else "no_admin_pin"
+            if request.endpoint != 'access_denied':
+                return redirect(url_for('access_denied', error=error_reason))
     else:
-        error_reason = "invalid_pin" if provided_pin else "no_pin"
-        if request.endpoint != 'access_denied': # Avoid redirect loop
-            return redirect(url_for('access_denied', error=error_reason))
+        # Regular routes require access PIN
+        if not access_pin:
+            print("CRITICAL: ACCESS_PIN environment variable is not set. Site access is blocked.")
+            if request.endpoint != 'access_denied':
+                return redirect(url_for('access_denied', error="config_error"))
+            return 
+
+        if session.get('pin_verified'):
+            return
+
+        provided_pin = request.args.get('access_pin')
+
+        if provided_pin and provided_pin == access_pin:
+            session['pin_verified'] = True
+            # Redirect to remove the access_pin from the URL query parameters
+            clean_path = request.path
+            return redirect(clean_path)
+        else:
+            error_reason = "invalid_pin" if provided_pin else "no_pin"
+            if request.endpoint != 'access_denied':
+                return redirect(url_for('access_denied', error=error_reason))
 
 app.register_blueprint(rsvp_bp) # Register the blueprint
 
@@ -86,6 +115,14 @@ def access_denied():
     elif error_type == "invalid_pin":
         title = "Este link não é válido"
         message += " O link utilizado está errado."
+    elif error_type == "no_admin_pin":
+        title = "Acesso Administrativo Negado"
+        message = "Esta página requer um link especial para administradores."
+        instructions = "Se você é administrador, confira se você acessou o link correto."
+    elif error_type == "invalid_admin_pin":
+        title = "Link Administrativo Inválido"
+        message = "O link administrativo utilizado está errado."
+        instructions = "Por favor, verifique o link correto ou entre em contato com a Laura."
     
     return render_template('access_denied.html', title=title, message=message, instructions=instructions), 200
 

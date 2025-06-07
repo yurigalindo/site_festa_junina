@@ -1,0 +1,72 @@
+{% extends "layout.html" %}
+
+{% block title %}Convidados Confirmados{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <h1 class="text-success text-center mb-4">Lista de Convidados Confirmados</h1>
+        
+        <!-- Summary Section -->
+        <div class="row mb-4">
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h2 class="card-title text-primary">{{ total_people }}</h2>
+                        <p class="card-text">Total de Pessoas Confirmadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h2 class="card-title text-secondary">{{ total_rsvps }}</h2>
+                        <p class="card-text">Total de Confirmações</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guests by City and Group -->
+        {% for city, groups in grouped_rsvps.items() %}
+            <div class="mb-4">
+                <h2 class="text-primary border-bottom pb-2">{{ city }}</h2>
+                
+                {% for group, rsvps in groups.items() %}
+                    <div class="mb-3">
+                        <h4 class="text-secondary">{{ group }}</h4>
+                        
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Data/Hora</th>
+                                        <th>Nomes</th>
+                                        <th>Qtd. Pessoas</th>
+                                        <th>Telefone</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for rsvp in rsvps %}
+                                        <tr>
+                                            <td>{{ rsvp.timestamp.strftime('%d/%m/%Y %H:%M') }}</td>
+                                            <td>{{ rsvp.names_str }}</td>
+                                            <td class="text-center">{{ rsvp.num_people }}</td>
+                                            <td>{{ rsvp.phone }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
+
+        {% if not grouped_rsvps %}
+            <div class="alert alert-info text-center" role="alert">
+                <h4>Nenhuma confirmação encontrada</h4>
+                <p>Ainda não há convidados confirmados para a festa.</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %} 
