@@ -7,23 +7,25 @@
         <h1 class="text-success text-center mb-4">Lista de Convidados Confirmados</h1>
         
         <!-- Summary Section -->
+        
         <div class="row mb-4">
-            <div class="col-md-6">
+            <h2 class="text-center mb-4" style="color: #e67905; font-family: Verdana, sans-serif; font-weight: bold;">Total de Pessoas Confirmadas: {{ total_people }}</h2>
+            <!-- <div class="col-md-6">
                 <div class="card text-center">
                     <div class="card-body">
                         <h2 class="card-title text-primary">{{ total_people }}</h2>
                         <p class="card-text">Total de Pessoas Confirmadas</p>
                     </div>
                 </div>
-            </div>
-            <div class="col-md-6">
+            </div> -->
+            <!-- <div class="col-md-6">
                 <div class="card text-center">
                     <div class="card-body">
                         <h2 class="card-title text-secondary">{{ total_rsvps }}</h2>
                         <p class="card-text">Total de Confirmações</p>
                     </div>
                 </div>
-            </div>
+            </div> -->
         </div>
 
         <!-- Guests by City and Group -->
@@ -33,7 +35,8 @@
                 
                 {% for group, rsvps in groups.items() %}
                     <div class="mb-3">
-                        <h4 class="text-secondary">{{ group }}</h4>
+                        {% set group_total = rsvps | sum(attribute='num_people') %}
+                        <h4 style="color: #40af08;">{{ group }} - {{ group_total }} {% if group_total == 1 %}pessoa{% else %}pessoas{% endif %}</h4>
                         
                         <div class="table-responsive">
                             <table class="table table-striped">
